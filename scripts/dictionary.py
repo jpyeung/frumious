@@ -3,35 +3,33 @@
 #
 # A function for dictionary searches. Returns an integer score, zero
 # if the input was not found.
+# 
+# I just threw it all into a dictionary because we have memory to spare.
 #
-# This uses a sorted dictionary file containing integer scores for
-# each word. It stores the dictionary in memory as a string and uses
-# binary search to find words. This is much slower to query than
-# loading it into a python dictionary, but uses less memory.
+# Requires a scored dictionary file where each line has the format "word score\n"
+# Ask someone or make your own. Put it in ../dict/scoredwords.txt
+#
+# Someone please fix my comprehension btw, I don't know why it doesn't work.
 
 import os
 here = os.path.dirname(__file__)
-dict_file = open(os.path.join(here, '../dict/scoredwords.txt'))
-dict_str = dict_file.read()
-dict_file.close()
-
-def score_rec(word, startpos=0, endpos=len(dict_str)+1):
-    if startpos >= endpos: return 0
-    mid = (endpos+startpos)//2
-    mid_start = dict_str.rfind('\n', 0, mid) + 1
-    mid_end = dict_str.find('\n', mid, len(dict_str))
-    if mid_end == -1: mid_end = len(dict_str)
-    print startpos, endpos, mid_start, mid_end, dict_str[mid_start:mid_end]
-    mid_word, mid_score = dict_str[mid_start:mid_end].split(' ')
-    if mid_word > word:
-        return score_rec(word, startpos, mid_start)
-    if mid_word < word:
-        return score_rec(word, mid_end+1, endpos)
-    return int(mid_score)
+fname = os.path.join(here, '../dict/scoredwords.txt')
+d = {}
+with open(fname) as f:
+    lines = f.readlines()
+    for line in lines:
+        parts = line.split(' ')
+        if len(parts) != 2:
+            continue
+        d[parts[0]] = int(parts[1])
+    #d = {{word : score for word, score in line.split(' ') if len(line.split(' ')) == 2} for line in lines}
 
 def score(word):
     if len(word) > 34:
         return 0
+    word = word.lower();
     if any([c not in 'abcdefghijklmnopqrstuvwxyz' for c in word]):
         return 0
-    return score_rec(word)
+    if word not in d:
+        return 0
+    return d[word]

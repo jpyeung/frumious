@@ -3,7 +3,7 @@
 # http://tools.qhex.org/
 
 
-import dictionaryFrumious as dictionary
+import dictionary as dictionary
 
 def caesarshift(strin):
     MAX_WORD_LEN = 20
