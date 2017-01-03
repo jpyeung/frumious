@@ -1,9 +1,11 @@
 from __future__ import print_function
+import getopt
 import httplib2
 import os
 import re
 import time
 import string
+import sys
 
 from apiclient import discovery
 from oauth2client import client
@@ -16,22 +18,53 @@ from slackclient import SlackClient
 # py -m pip install --upgrade slackclient
 # py -m pip install --upgrade google-api-python-client
 
+# Required files:
+#   slack_token.txt (for Slack API), client_secret.json (for Google Drive/Sheets API)
+
+def usage():
+    print("Usage: quickstart.py -f folderId -s spreadsheetId\n"+
+        "\t-f, --folder: the folder id where new spreadsheets should be created\n"+
+        "\t-s, --spreadsheet: the spreadsheet id of the master sheet to be parsed\n"+
+        "\t-h, --help: display this usage message"
+)
+
+# Initialization stuff
 f = open('slack_token.txt', 'r')
 slack_token = f.read()
 sc = SlackClient(slack_token)
-
 try:
-    import argparse
-    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
-except ImportError:
-    flags = None
+    opts, args = getopt.getopt(sys.argv[1:], "hf:s:", ["help","folder=", "spreadsheet="])
+except (getopt.GetoptError) as err:
+    # print help information and exit:
+    print(str(err))  # will print something like "option -a not recognized"
+    usage()
+    sys.exit(2)
+folderId = None
+spreadsheetId = None
+for o, a in opts:
+    if o in ("-h", "--help"):
+        usage()
+        sys.exit()
+    elif o in ("-f", "--folder"):
+        folderId = a
+    elif o in ("-s", "--spreadsheet"):
+        spreadsheetId = a
+    else:
+        assert False, "unhandled option"
+if not folderId:
+    print("-f was not given")
+    usage()
+    sys.exit(2)
+if not spreadsheetId:
+    print("-s was not given")
+    usage()
+    sys.exit(2)
 
 # If modifying these scopes, delete your previously saved credentials
 # at ~/.credentials/sheets.googleapis.com-python-quickstart.json
-SCOPES = 'https://www.googleapis.com/auth/spreadsheets'
+SCOPES = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Google Sheets API Python Quickstart'
-
 
 def get_credentials():
     """Gets valid user credentials from storage.
@@ -69,6 +102,66 @@ def list_channels():
         return channels_call['channels']
     return None
 
+def set_spreadsheet_title(spreadsheet_id, title):
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())        
+    discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?'
+                    'version=v4')
+    service = discovery.build('sheets', 'v4', http=http,
+                              discoveryServiceUrl=discoveryUrl)
+    requests = []
+    # Change the spreadsheet's title
+    requests.append({
+        'updateSpreadsheetProperties': {
+            'properties': {
+                'title': title
+            },
+            'fields': 'title'
+        }
+    })
+
+    body = {
+        'requests': requests
+    }
+    response = service.spreadsheets().batchUpdate(spreadsheetId=spreadsheet_id,
+                                                   body=body).execute()
+    return response
+
+def create_puzzle_spreadsheet(puzzle):
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())        
+    discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?'
+                    'version=v4')
+    service = discovery.build('drive', 'v3', http=http)
+    file_metadata = {
+        'name': puzzle,
+        'mimeType': 'application/vnd.google-apps.spreadsheet',
+        'parents': [folderId],
+    }
+    file = service.files().create(body=file_metadata,
+                                    fields='id').execute()
+    return file.get('id')
+
+def update_spreadsheet_link(rangeName,puzzleSpreadsheetId):
+    credentials = get_credentials()
+    http = credentials.authorize(httplib2.Http())        
+    discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?'
+                    'version=v4')
+    service = discovery.build('sheets', 'v4', http=http,
+                              discoveryServiceUrl=discoveryUrl)
+    link = "https://docs.google.com/spreadsheets/d/"+puzzleSpreadsheetId+"/edit"
+    values = [
+        [link],
+    ]
+    body = {
+      'values': values
+    }
+    valueInputOption = 'RAW'
+    result = service.spreadsheets().values().update(
+        spreadsheetId=spreadsheetId, range=rangeName,
+        valueInputOption=valueInputOption, body=body).execute()
+    return result
+
 def main():
 
     if sc.rtm_connect():
@@ -84,8 +177,6 @@ def main():
                             'version=v4')
             service = discovery.build('sheets', 'v4', http=http,
                                       discoveryServiceUrl=discoveryUrl)
-            # Spreadsheet ID here
-            spreadsheetId = '1ax8w39o93QaOkRGZCPe_hEqdpZTkmNdDIo6fw3dHoqk'
             # Range of values we care about here
             headerRange = 'Sheet1!A1:E1'
             rangeName = 'Sheet1!A2:E'
@@ -96,60 +187,82 @@ def main():
                 spreadsheetId=spreadsheetId, range=rangeName).execute()
             values = result.get('values', [])
 
-            # Slack stuff
+            # Get list of Slack channels and pull channel ids
             channels = list_channels()
             channel_ids = {}
             if channels:
-                print("Channels: ")
                 for c in channels:
                     channel_ids[c['name']] = c['id']
-                    # print(c['name'] + " (" + c['id'] + ")")
-                print(channel_ids)
             else:
                 print("Unable to authenticate.")
-            # print(channel_names)
-
+            
             if not values:
                 print('No data found.')
             else:
                 print(', '.join([str(i) for i in columns]) + ':')
+                rownum = 1
                 for row in values:
-                    row.extend(['']*(7-len(row)))
+                    rownum += 1
+                    row.extend(['']*(5-len(row)))
                     puzzle = row[0]
-                    meta = row[1]
-                    status = row[2]
-                    answer = row[3]
-                    guesses = row[4]
-                    puzzleLink = row[5]
-                    spreadsheetLink = row[6]
+                    status = row[1]
+                    answer = row[2]
+                    puzzleLink = row[3]
+                    spreadsheetLink = row[4]
                     print('%s, %s, %s' % (puzzle, status, answer))
+                    # Join the channel, or create it if it doesn't exist
                     join_response = sc.api_call(
                         "channels.join",
                         name=puzzle
                     )
-                    # print(join_response)
+                    
+                    # Grab spreadsheet ID from spreadsheet link column
+                    puzzleSpreadsheetId = ''
+                    if spreadsheetLink:
+                        matchObj = re.match(r'.*/d/(\w+)/.*', spreadsheetLink)
+                        if matchObj:
+                            puzzleSpreadsheetId = matchObj.group(1)
+                    else:
+                        puzzleSpreadsheetId = create_puzzle_spreadsheet(puzzle)
+                        update_spreadsheet_link('E'+str(rownum), puzzleSpreadsheetId)
+
+                    # If not yet solved, unarchive the channel and set the title of the spreadsheet to the puzzle name
                     if status.lower() != 'solved':
                         unarchive_response = sc.api_call(
                             "channels.unarchive",
                             channel=channel_ids[puzzle]
                         )
-                        # print(unarchive_response)
+                        if puzzleSpreadsheetId:
+                            set_title_response = set_spreadsheet_title(puzzleSpreadsheetId, puzzle)
+                    # If solved, archive the channel and set the title to [SOLVED] puzzlename - answer
                     else:
                         archive_response = sc.api_call(
                             "channels.archive",
                             channel=channel_ids[puzzle]
                         )
-                    purpose_response = sc.api_call(
-                        "channels.setPurpose",
-                        channel=channel_ids[puzzle],
-                        purpose=puzzleLink
-                    )
-                    topic_response = sc.api_call(
-                        "channels.setTopic",
-                        channel=channel_ids[puzzle],
-                        topic=spreadsheetLink
-                    )
+                        if puzzleSpreadsheetId:
+                            set_title_response = set_spreadsheet_title(puzzleSpreadsheetId, '[SOLVED] '+puzzle+' - '+answer)
 
+                    channel_info = sc.api_call(
+                        "channels.info",
+                        channel=channel_ids[puzzle],
+                    )
+                    # Set the purpose of the channel to be the the puzzle link
+                    if channel_info['channel']['purpose']['value'] != puzzleLink:
+                        purpose_response = sc.api_call(
+                            "channels.setPurpose",
+                            channel=channel_ids[puzzle],
+                            purpose=puzzleLink
+                        )
+                    # Set the topic of the channel to be the spreadsheet link
+                    if channel_info['channel']['topic']['value'] != spreadsheetLink:
+                        topic_response = sc.api_call(
+                            "channels.setTopic",
+                            channel=channel_ids[puzzle],
+                            topic=spreadsheetLink
+                        )
+
+            # Set refresh time here in seconds
             time.sleep(30)
     else:
         print("Connection Failed, invalid token?")
