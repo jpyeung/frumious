@@ -62,7 +62,7 @@ if not spreadsheetId:
 
 # If modifying these scopes, delete your previously saved credentials
 # at ~/.credentials/sheets.googleapis.com-python-quickstart.json
-SCOPES = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive'
+SCOPES = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Google Sheets API Python Quickstart'
 
@@ -178,42 +178,48 @@ def main():
             service = discovery.build('sheets', 'v4', http=http,
                                       discoveryServiceUrl=discoveryUrl)
             # Range of values we care about here
-            headerRange = 'Sheet1!A1:E1'
-            rangeName = 'Sheet1!A2:E'
+            headerRange = 'Sheet1!A1:1'
             header = service.spreadsheets().values().get(
                 spreadsheetId=spreadsheetId, range=headerRange).execute()
-            columns = header.get('values', [])
+            columns = header.get('values', [])[0]
+            rangeName = 'Sheet1!A2:Z'
             result = service.spreadsheets().values().get(
                 spreadsheetId=spreadsheetId, range=rangeName).execute()
             values = result.get('values', [])
 
-            # Get list of Slack channels and pull channel ids
-            channels = list_channels()
-            channel_ids = {}
-            if channels:
-                for c in channels:
-                    channel_ids[c['name']] = c['id']
-            else:
-                print("Unable to authenticate.")
-            
             if not values:
                 print('No data found.')
             else:
-                print(', '.join([str(i) for i in columns]) + ':')
+                print('Puzzle, Status, Answer:')
                 rownum = 1
+                puzzleIndex = columns.index('Puzzle')
+                statusIndex = columns.index('Status')
+                answerIndex = columns.index('Answer')
+                puzzleLinkIndex = columns.index('Puzzle Link')
+                spreadsheetLinkIndex = columns.index('Spreadsheet Link')
                 for row in values:
                     rownum += 1
                     row.extend(['']*(5-len(row)))
-                    puzzle = row[0]
-                    status = row[1]
-                    answer = row[2]
-                    puzzleLink = row[3]
-                    spreadsheetLink = row[4]
+                    puzzle = row[puzzleIndex]
+                    status = row[statusIndex]
+                    answer = row[answerIndex]
+                    puzzleLink = row[puzzleLinkIndex]
+                    spreadsheetLink = row[spreadsheetLinkIndex]
+
+                    # If nothing in the puzzle column, skip to the next row
+                    if not puzzle:
+                        continue
+
+                    # Create the slack channel name (spaces -> hyphens, remove other chars, shorten to 21 chars)
                     print('%s, %s, %s' % (puzzle, status, answer))
+                    shortPuzzle = re.sub(r' ', '-', puzzle)
+                    shortPuzzle = re.sub(r'[^a-zA-Z0-9_-]', '', shortPuzzle)[:21]
+                    shortPuzzle = shortPuzzle.lower()
+                    
                     # Join the channel, or create it if it doesn't exist
                     join_response = sc.api_call(
                         "channels.join",
-                        name=puzzle
+                        name=shortPuzzle
                     )
                     
                     # Grab spreadsheet ID from spreadsheet link column
@@ -226,11 +232,20 @@ def main():
                         puzzleSpreadsheetId = create_puzzle_spreadsheet(puzzle)
                         update_spreadsheet_link('E'+str(rownum), puzzleSpreadsheetId)
 
+                    # Get list of Slack channels and pull channel ids
+                    channels = list_channels()
+                    channel_ids = {}
+                    if channels:
+                        for c in channels:
+                            channel_ids[c['name']] = c['id']
+                    else:
+                        print("Unable to authenticate.")
+
                     # If not yet solved, unarchive the channel and set the title of the spreadsheet to the puzzle name
                     if status.lower() != 'solved':
                         unarchive_response = sc.api_call(
                             "channels.unarchive",
-                            channel=channel_ids[puzzle]
+                            channel=channel_ids[shortPuzzle]
                         )
                         if puzzleSpreadsheetId:
                             set_title_response = set_spreadsheet_title(puzzleSpreadsheetId, puzzle)
@@ -238,27 +253,27 @@ def main():
                     else:
                         archive_response = sc.api_call(
                             "channels.archive",
-                            channel=channel_ids[puzzle]
+                            channel=channel_ids[shortPuzzle]
                         )
                         if puzzleSpreadsheetId:
                             set_title_response = set_spreadsheet_title(puzzleSpreadsheetId, '[SOLVED] '+puzzle+' - '+answer)
 
                     channel_info = sc.api_call(
                         "channels.info",
-                        channel=channel_ids[puzzle],
+                        channel=channel_ids[shortPuzzle],
                     )
                     # Set the purpose of the channel to be the the puzzle link
                     if channel_info['channel']['purpose']['value'] != puzzleLink:
                         purpose_response = sc.api_call(
                             "channels.setPurpose",
-                            channel=channel_ids[puzzle],
+                            channel=channel_ids[shortPuzzle],
                             purpose=puzzleLink
                         )
                     # Set the topic of the channel to be the spreadsheet link
                     if channel_info['channel']['topic']['value'] != spreadsheetLink:
                         topic_response = sc.api_call(
                             "channels.setTopic",
-                            channel=channel_ids[puzzle],
+                            channel=channel_ids[shortPuzzle],
                             topic=spreadsheetLink
                         )
 
