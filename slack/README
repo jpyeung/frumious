@@ -1,0 +1,31 @@
+These are the Python scripts used by Frumious Bandersnatch to sync organization
+between Google Drive and Slack.
+
+Scripts are as follows:
+--------------------------------------------------------------------------------
+quickstart.py - Reads a Google spreadsheet and creates spreadsheets and
+	Slack channels for puzzles, updating them accordingly based on status change
+
+Required:
+	Files:
+		slack-token.txt, a token (for Slack API)
+		client_secret.json (for Google Drive/Sheets API)
+
+	pip modules:
+		slackclient
+		google-api-python-client
+
+	Arguments:
+    	-f, --folder: the folder id where new spreadsheets should be created
+        -s, --spreadsheet: the spreadsheet id of the master sheet to be parsed
+
+Features:
+- Reads the 'Puzzle' column, creating a Slack channel if necessary
+	(using a short, Slack-sanitized name)
+- Reads the 'Spreadsheet Link' column, creating a Google spreadsheet in the
+	specified folder if necessary (i.e., if the cell is empty)
+- Reads the 'Status' column, if not solved, unarchive channel and set title
+	of the spreadsheet to the puzzle name; if solved, archive channel and set
+	title of the spreadsheet to the form '[SOLVED] Puzzle - Answer'
+- Reads the 'Puzzle Link' column and sets that as the channel description
+- Reads the 'Spreadsheet Link' column and sets that as the channel topic
