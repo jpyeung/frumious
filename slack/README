@@ -16,8 +16,8 @@ Required:
 		google-api-python-client
 
 	Arguments:
-    	-f, --folder: the folder id where new spreadsheets should be created
-        -s, --spreadsheet: the spreadsheet id of the master sheet to be parsed
+		-f, --folder: the folder id where new spreadsheets should be created
+		-s, --spreadsheet: the spreadsheet id of the master sheet to be parsed
 
 Features:
 - Reads the 'Puzzle' column, creating a Slack channel if necessary
