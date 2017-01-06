@@ -20,12 +20,12 @@ Required:
 		-s, --spreadsheet: the spreadsheet id of the master sheet to be parsed
 
 Features:
-- Reads the 'Puzzle' column, creating a Slack channel if necessary
-	(using a short, Slack-sanitized name)
-- Reads the 'Spreadsheet Link' column, creating a Google spreadsheet in the
-	specified folder if necessary (i.e., if the cell is empty)
-- Reads the 'Status' column, if not solved, unarchive channel and set title
-	of the spreadsheet to the puzzle name; if solved, archive channel and set
-	title of the spreadsheet to the form '[SOLVED] Puzzle - Answer'
-- Reads the 'Puzzle Link' column and sets that as the channel description
-- Reads the 'Spreadsheet Link' column and sets that as the channel topic
+	- Reads the 'Puzzle' column, creating a Slack channel if necessary
+		(using a short, Slack-sanitized name)
+	- Reads the 'Spreadsheet Link' column, creating a Google spreadsheet in the
+		specified folder if necessary (i.e., if the cell is empty)
+	- Reads the 'Status' column, if not solved, unarchive channel and set title
+		of the spreadsheet to the puzzle name; if solved, archive channel
+		and set title of the spreadsheet to the form '[SOLVED] Puzzle - Answer'
+	- Reads the 'Puzzle Link' column and sets that as the channel description
+	- Reads the 'Spreadsheet Link' column and sets that as the channel topic
