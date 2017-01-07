@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<h2>Polyominoes</h2>
+
+Assembles a set of polyominoes into a given shape. The input is a mode, followed by a board shape, then the pieces, separated by empty lines. The mode is one of:<p>
+<span style="font-family:monospace;">translation</span> - only translation allowed<br>
+<span style="font-family:monospace;">rotation</span> - translation and rotation allowed<br>
+<span style="font-family:monospace;">reflection</span> - translation, rotation, and reflection allowed
+<p>
+If there are not enough pieces to fill the board, results with empty space will be returned. If the piece area is greater than the board area, pieces will be allowed to overlap to fill the board.
+<p>
+Pentomino example:
+<pre class="example">
+reflection
+
+  ######### ###########
+ ########## ##########
+########### #########
+
+ AA
+AA
+ A
+
+BBBBB
+
+CCCC
+C
+
+ DDD
+DD
+
+EEE
+EE
+
+F
+FFF
+F
+
+G G
+GGG
+
+H
+H
+HHH
+
+I
+II
+ II
+
+ J
+JJJ
+ J
+
+KKKK
+ K
+
+LL
+ L
+ LL
+</pre>
+<br>
+Example from <a href="http://www.mit.edu/~puzzle/06/puzzles/epcot_center/pentris/answer/solution.html">Pentris</a> (2006):
+<pre class="example">
+translation
+
+##########
+##########
+##########
+##########
+##########
+
+AA
+A
+AA
+
+   B
+BBBB
+
+ C
+CCC
+ C
+
+  D
+  D
+DDD
+
+ E
+EEEE
+
+FFF
+  FF
+
+GGGG
+G
+
+HH
+H
+*H
+
+ I
+II
+ I
+ I
+
+J
+J
+J
+J
+J
+</pre>
+<br>
+Example with empty space (slow) from <a href="http://web.mit.edu/puzzle/www/12/puzzles/betsy_johnson/caterpillars/solution/">Caterpillars</a> (2012):
+<p>
+<img src="images/caterpillars.png">
+<pre class="example">
+rotation
+
+################
+################
+################
+################
+################
+################
+################
+################
+################
+################
+################
+################
+################
+################
+################
+################
+
+. ...   ..
+... .....
+
+......  .
+     .. .
+      ...
+
+....
+   ....
+      ...
+        ...
+
+...
+. ..
+.  ....
+.     ...
+..      ..
+ ..      ...
+  ..
+
+......
+.    .
+    ..
+    .
+    .
+    . ..
+    ...
+
+......
+.    .
+.    ..
+      ....
+         .
+       . .
+       ...
+
+.......
+.     ....
+.        ...
+.
+.
+.
+. .
+...
+
+..
+ ..
+  .
+  ......
+       .
+       ..
+        ....
+           .
+           .
+           .
+           .
+        ....
+
+...
+. ......
+.      ...
+.
+.
+
+.....
+    .
+    .
+  ...
+ ..
+</pre>

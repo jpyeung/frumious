@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+dt { font-family:monospace; }
+</style>
+</head>
+<body>
+
+<h2>Format</h2>
+Lets you format text or n-dimensional tables and pass the data to another tool. Enter input data followed by an empty line and a sequence of commands from the following:
+<dl>
+<dt>split [separator ...]</dt>
+<dd>Split strings in the input along separators (one for each dimension) to create a table.</dd>
+
+<dt>join [separator ...]</dt>
+<dd>Join strings in the input with the given separators (inverse of split).</dd>
+
+<dt>strip</dt>
+<dd>Remove empty elements and whitespace from the input.</dd>
+
+<dt>chunk [size] ...</dt>
+<dd>Chunk the input into parts of the given size or less. You can omit the size to see possible factors, or provide multiple arguments to chunk along multiple dimensions.</dd>
+
+<dt>slice [spec] ...</dt>
+<dd>Selects a subset of a multidimensional list. Each argument applies to one dimension, and can be of the form:<br>&quot;5&quot; to select an index, &quot;2:4&quot; to select a range, &quot;1:10:2&quot; to indicate a step, or &quot;5,2:4&quot; to concatenate multiple parts. "::-1" will reverse the input.</dd>
+
+<dt>replace [pattern] [replacement] ...</dt>
+<dd>Perform one or more regex replacements on all strings in the input.</dd>
+
+<dt>transpose</dt>
+<dd>Transpose the first two dimensions of a table.</dd>
+<dt>transpose [axis ...]</dt>
+<dd>Permute the axes of a table based on the ordering provided. For example, &quot;<span style="font-family:monospace;">transpose 1 0 2</span>&quot; transposes the first two dimensions of a 3D table.</dd>
+
+<dt>print</dt>
+<dd>Lay out a table visually.</dd>
+<dt>print [(v|h)(0-9)...]</dt>
+<dd>Lay out a table based on a given sequence of horizontal and vertical concatenations. For example, &quot;<span style="font-family:monospace;">v0h1</span>&quot; places rows vertically with no padding, then columns horizontally with one space of padding. This is the default for a 2D table.</dd>
+<dt>print [(v|h)(0-9)...] [left|center|right]</dt>
+<dd>Print with a given text alignment.</dd>
+
+<dt># [...]</dt>
+<dd>Do nothing (comment).</dd>
+
+<dt>[toolname]</dt>
+<dd>Any other tool (such as "extraction") can be run as one of the commands.</dd>
+</dl>
+
+<h3>Examples</h3>
+
+Parse and transpose a table:
+<pre class="example">
+JELLO HARRY FOWL FOLLOW RELATE
+5 1 4 3 2
+
+split '\n' ' '
+transpose
+print
+</pre>
+
+Reformat data and run the <a href="extraction.html">extraction tool</a>:
+<pre class="example">
+JELLO HARRY FOWL FOLLOW RELATE
+5 1 4 3 2
+
+split '\n' ' '
+transpose
+join '\n' ,
+extraction
+</pre>
+
+From <a href="http://web.mit.edu/puzzle/www/06/puzzles/paris/numeracy/">Numeracy</a> (2006), fit digits into a square and highlight the zeroes.
+<pre class="example" style="overflow:hidden">
+9999999999900000000000909999999099099900000990999099909909990999099009909900990909090909909900099090000000000099999999999
+
+split ''
+chunk 11
+replace 0 # 9 `
+print
+</pre>
+
+</body>
+</html>

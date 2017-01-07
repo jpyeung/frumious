@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<h2>Histogram</h2>
+Shows a histogram of the characters in the input, the top 50 bigrams, trigrams, and words, as well as the longest repeated substrings.
+<p>
+Example from the Declaration of Independence:
+<span class="example" style="display:none">We hold these truths to be self-evident, that all men are created equal, that they are endowed by their Creator with certain unalienable Rights, that among these are Life, Liberty and the pursuit of Happiness. - That to secure these rights, Governments are instituted among Men, deriving their just powers from the consent of the governed, - That whenever any Form of Government becomes destructive of these ends, it is the Right of the People to alter or to abolish it, and to institute new Government, laying its foundation on such principles and organizing its powers in such form, as to them shall seem most likely to effect their Safety and Happiness. Prudence, indeed, will dictate that Governments long established should not be changed for light and transient causes; and accordingly all experience hath shewn, that mankind are more disposed to suffer, while evils are sufferable, than to right themselves by abolishing the forms to which they are accustomed. But when a long train of abuses and usurpations, pursuing invariably the same Object evinces a design to reduce them under absolute Despotism, it is their right, it is their duty, to throw off such Government, and to provide new Guards for their future security.</span>
+...
+<p>
+For reference, English language letter frequencies from <a href="http://en.wikipedia.org/wiki/Letter_frequency">Wikipedia</a>:
+<pre>
+A  8.167% ########################
+B  1.492% ####
+C  2.782% ########
+D  4.253% ############
+E 12.702% ######################################
+F  2.228% ######
+G  2.015% ######
+H  6.094% ##################
+I  6.966% ####################
+J  0.153%
+K  0.772% ##
+L  4.025% ############
+M  2.406% #######
+N  6.749% ####################
+O  7.507% ######################
+P  1.929% #####
+Q  0.095%
+R  5.987% #################
+S  6.327% ##################
+T  9.056% ###########################
+U  2.758% ########
+V  0.978% ##
+W  2.360% #######
+X  0.150%
+Y  1.974% #####
+Z  0.074%
+</pre>
+The most common <a href="http://en.wikipedia.org/wiki/Bigram">bigrams</a>:
+<pre>
+TH 1.52% ##############################
+HE 1.28% #########################
+IN 0.94% ##################
+ER 0.94% ##################
+AN 0.82% ################
+RE 0.68% #############
+ND 0.63% ############
+AT 0.59% ###########
+ON 0.57% ###########
+NT 0.56% ###########
+HA 0.56% ###########
+ES 0.56% ###########
+ST 0.55% ###########
+EN 0.55% ###########
+ED 0.53% ##########
+TO 0.52% ##########
+IT 0.50% ##########
+OU 0.50% ##########
+EA 0.47% #########
+HI 0.46% #########
+IS 0.46% #########
+OR 0.43% ########
+TI 0.34% ######
+AS 0.33% ######
+TE 0.27% #####
+ET 0.19% ###
+NG 0.18% ###
+OF 0.16% ###
+AL 0.09% #
+DE 0.09% #
+SE 0.08% #
+LE 0.08% #
+SA 0.06% #
+SI 0.05% #
+AR 0.04% 
+VE 0.04% 
+RA 0.04% 
+LD 0.02% 
+UR 0.02% 
+</pre>
+The most common <a href="http://en.wikipedia.org/wiki/Trigram">trigrams</a>:
+<pre>
+THE
+AND
+THA
+ENT
+ING
+ION
+TIO
+FOR
+NDE
+HAS
+NCE
+EDT
+TIS
+OFT
+STH
+MEN
+</pre>

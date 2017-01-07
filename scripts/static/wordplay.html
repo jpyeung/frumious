@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+dt,span { font-family:monospace; }
+</style>
+</head>
+<body>
+
+<h2>Word play</h2>
+
+<p>Finds words matching a list of conditions, one per line. The most common words are returned first.</p>
+
+<h3>Regular expressions</h3>
+<p>You can use <a href="http://docs.python.org/2/library/re.html">regular expressions</a> such as:</p>
+<p><span class="example">..sw..</span> - 6-letter words with 'sw' in the given position</p>
+<p><span class="example">.*(...)\1.*</span> - Words with a 3-letter repetition</p>
+
+<p>
+&quot;<span>!expression</span>&quot; inverts an expression.<br>
+&quot;<span>\P</span>&quot; matches an element from the periodic table.<br>
+&quot;<span>\S</span>&quot; matches a US state abbreviation.
+</p>
+
+<h3>Operations</h3>
+<p>You can also list operations such as:</p>
+<p><span class="example">anagram: dirtyroom</span></p>
+<p><span class="example">add 3: pinky</span> - Add three letters to get a word</p>
+
+<p>The full list of commands is:</p>
+
+<dl>
+<dt>anagram: &lt;letters&gt;</dt> <dd>Rearranging the given letters</dd>
+<dt>subanagram: &lt;letters&gt;</dt><dd>Rearranging at most the given letters</dd>
+<dt>superanagram: &lt;letters&gt;</dt><dd>Rearranging at least the given letters</dd>
+<dt>transdelete [n]: &lt;letters&gt;</dt><dd>Rearranging all but N of the given letters (N=1 if omitted)</dd>
+<dt>transadd [n]: &lt;letters&gt;</dt><dd>Rearranging all of the given letters plus N wildcards (N=1 if omitted)</dd>
+<dt>bank: &lt;letters&gt;</dt><dd>Using the same set of unique letters as the given string</dd>
+<dt>subbank: &lt;letters&gt;</dt><dd>Using at most the same set of unique letters as the given string</dd>
+<dt>superbank: &lt;letters&gt;</dt><dd>Using at least the same set of unique letters as the given string</dd>
+<dt>substring: &lt;letters&gt;</dt><dd>Included in the given string</dd>
+<dt>delete [n]: &lt;letters&gt;</dt><dd>Achievable by deleting N letters from the given string (N=any if omitted)</dd>
+<dt>add [n]: &lt;letters&gt;</dt><dd>Achievable by inserting N letters into the given string (N=any if omitted)</dd>
+<dt>change [n]: &lt;letters&gt;</dt><dd>Achievable by exactly N letter changes from the given string (N=1 if omitted)</dd>
+</dl>
+
+<h3>Cross-filtering</h3>
+<p>This is a mechanism for finding related pairs of words. For example, to find words which are transdeletions of another 8-letter word:</p>
+
+<pre class="example">.{8}
+=&gt;
+transdelete: %</pre>
+
+<p>The &quot;<span>=&gt;</span>&quot; operator divides the list of filters into two stages. The first stage is a regular expression that finds 8-letter words. For each of the top results from the first stage, the second stage is executed with the &quot;<span>%</span>&quot; symbol replaced by the word in question. The resulting pairs of words are shown.<p>
+
+<p>Up to 1000 matches from the first stage are considered, and 20 matches from the second stage.</p>
+
+</body>
+</html>

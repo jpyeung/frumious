@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!-- saved from url=(0023)https://tools.qhex.org/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+
+<script src="jquery-1.8.3.min.js"></script>
+<script src="index.js"></script>
+
+<style type="text/css">
+body {
+ overflow:hidden;
+ background-color:#f6f6f6;
+}
+#docframe {
+ position:absolute;
+ left:0;
+ top:0;
+ width:40%;
+ height:100%;
+ border:0;
+}
+#io {
+ position:absolute;
+ top:0;
+ bottom:0;
+ left:40%;
+ right:0;
+ padding:10pt;
+ padding-right:15pt;
+}
+#inputbox {
+ font-family:monospace;
+ width:100%;
+ height:150pt;
+ resize:vertical;
+}
+#startbutton {
+ font-size:120%;
+}
+#output_div {
+ font-family:monospace;
+ overflow:auto;
+ position:absolute;
+ top:195pt;
+ bottom:0;
+ left:12pt;
+ right:0;
+ vertical-align:top;
+}
+#copybutton {
+ display:none;
+}
+</style>
+</head>
+<body>
+
+<iframe id="docframe" src="menu.html" onload="frameLoad()" frameborder="0"></iframe>
+
+<div id="io">
+
+<textarea id="inputbox"></textarea><br>
+<button id="startbutton" type="button" onclick="startStop()">Start</button>
+<span id="curtool">format</span>
+<span style="float:right">
+<button type="button" onclick="$(&#39;#inputbox&#39;)[0].value=&#39;&#39;">clear input</button>
+history:
+<select id="history" onchange="getHistory()">
+<option value="format 1483386297791">2:44:57 format 77</option><option value="format 1483386310756">2:45:10 format 79</option><option value="format 1483386478956">2:47:58 format 79</option><option value="format 1483386489953">2:48:09 format 77</option></select>
+</span>
+
+<div id="output_div">
+<pre id="output"></pre>
+<pre id="progress"></pre>
+<button id="copybutton" type="button" onclick="doCopy()">copy to input</button>
+<br>&nbsp;
+</div>
+
+</div>
+
+
+
+</body></html>
