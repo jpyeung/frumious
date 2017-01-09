@@ -6,7 +6,7 @@ Scripts are as follows:
 quickstart.py - Reads a Google spreadsheet and creates spreadsheets and
 	Slack channels for puzzles, updating them accordingly based on status change
 
-Usage: quickstart.py -f [folderId] -s [spreadsheetId]
+Usage: python3 quickstart.py -f [folderId] -s [spreadsheetId]
 
 Required:
 	Files:

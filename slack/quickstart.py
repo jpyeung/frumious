@@ -22,7 +22,7 @@ from slackclient import SlackClient
 #   slack_token.txt (for Slack API), client_secret.json (for Google Drive/Sheets API)
 
 def usage():
-    print("Usage: quickstart.py -f [folderId] -s [spreadsheetId]\n"+
+    print("Usage: python3 quickstart.py -f [folderId] -s [spreadsheetId]\n"+
         "\t-f, --folder: the folder id where new spreadsheets should be created\n"+
         "\t-s, --spreadsheet: the spreadsheet id of the master sheet to be parsed\n"+
         "\t-h, --help: display this usage message"
