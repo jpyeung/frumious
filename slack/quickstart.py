@@ -104,7 +104,7 @@ def list_channels():
 
 def set_spreadsheet_title(spreadsheet_id, title):
     credentials = get_credentials()
-    http = credentials.authorize(httplib2.Http())        
+    http = credentials.authorize(httplib2.Http())
     discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?'
                     'version=v4')
     service = discovery.build('sheets', 'v4', http=http,
@@ -129,7 +129,7 @@ def set_spreadsheet_title(spreadsheet_id, title):
 
 def create_puzzle_spreadsheet(puzzle):
     credentials = get_credentials()
-    http = credentials.authorize(httplib2.Http())        
+    http = credentials.authorize(httplib2.Http())
     discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?'
                     'version=v4')
     service = discovery.build('drive', 'v3', http=http)
@@ -144,7 +144,7 @@ def create_puzzle_spreadsheet(puzzle):
 
 def update_spreadsheet_link(rangeName,puzzleSpreadsheetId):
     credentials = get_credentials()
-    http = credentials.authorize(httplib2.Http())        
+    http = credentials.authorize(httplib2.Http())
     discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?'
                     'version=v4')
     service = discovery.build('sheets', 'v4', http=http,
@@ -215,13 +215,13 @@ def main():
                     shortPuzzle = re.sub(r' ', '-', puzzle)
                     shortPuzzle = re.sub(r'[^a-zA-Z0-9_-]', '', shortPuzzle)[:21]
                     shortPuzzle = shortPuzzle.lower()
-                    
+
                     # Join the channel, or create it if it doesn't exist
                     join_response = sc.api_call(
                         "channels.join",
                         name=shortPuzzle
                     )
-                    
+
                     # Grab spreadsheet ID from spreadsheet link column
                     puzzleSpreadsheetId = ''
                     if spreadsheetLink:
@@ -278,7 +278,7 @@ def main():
                         )
 
             # Set refresh time here in seconds
-            time.sleep(30)
+            time.sleep(10)
     else:
         print("Connection Failed, invalid token?")
 
