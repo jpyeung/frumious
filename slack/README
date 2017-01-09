@@ -6,14 +6,18 @@ Scripts are as follows:
 quickstart.py - Reads a Google spreadsheet and creates spreadsheets and
 	Slack channels for puzzles, updating them accordingly based on status change
 
+Usage: quickstart.py -f [folderId] -s [spreadsheetId]
+
 Required:
 	Files:
 		slack-token.txt, a token (for Slack API)
 		client_secret.json (for Google Drive/Sheets API)
+		~/.credentials/sheets.googleapis.com-python-quickstart.json
+			(this might be auto-generated if you can open a browser)
 
-	pip modules:
-		slackclient
-		google-api-python-client
+	Setup (run the following):
+		python3 -m pip install --upgrade slackclient
+		python3 -m pip install --upgrade google-api-python-client
 
 	Arguments:
 		-f, --folder: the folder id where new spreadsheets should be created
