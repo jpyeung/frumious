@@ -30,8 +30,9 @@ def usage():
 
 # Initialization stuff
 f = open('slack_token.txt', 'r')
-slack_token = f.read()
+slack_token = f.readlines()[0].strip('\n')
 sc = SlackClient(slack_token)
+
 try:
     opts, args = getopt.getopt(sys.argv[1:], "hf:s:", ["help","folder=", "spreadsheet="])
 except (getopt.GetoptError) as err:
