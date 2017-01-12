@@ -226,7 +226,7 @@ def main():
                     # Grab spreadsheet ID from spreadsheet link column
                     puzzleSpreadsheetId = ''
                     if spreadsheetLink:
-                        matchObj = re.match(r'.*/d/(\w+)/.*', spreadsheetLink)
+                        matchObj = re.match(r'.*/d/([a-zA-Z0-9_-]+)/.*', spreadsheetLink)
                         if matchObj:
                             puzzleSpreadsheetId = matchObj.group(1)
                     else:
