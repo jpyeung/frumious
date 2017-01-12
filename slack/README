@@ -3,8 +3,9 @@ between Google Drive and Slack.
 
 Scripts are as follows:
 --------------------------------------------------------------------------------
-quickstart.py - Reads a Google spreadsheet and creates spreadsheets and
-	Slack channels for puzzles, updating them accordingly based on status change
+quickstart.py - Reads a Google spreadsheet with a 'Sync' sheet
+	and creates spreadsheets and Slack channels for puzzles,
+	updating them accordingly based on status change
 
 Usage: python3 quickstart.py -f [folderId] -s [spreadsheetId]
 
@@ -21,7 +22,8 @@ Required:
 
 	Arguments:
 		-f, --folder: the folder id where new spreadsheets should be created
-		-s, --spreadsheet: the spreadsheet id of the master sheet to be parsed
+		-s, --spreadsheet: the spreadsheet id of the master sheet to be parsed,
+		    should contain a sheet called 'Sync'
 
 Features:
 	- Reads the 'Puzzle' column, creating a Slack channel if necessary
