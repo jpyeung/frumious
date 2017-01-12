@@ -179,11 +179,11 @@ def main():
             service = discovery.build('sheets', 'v4', http=http,
                                       discoveryServiceUrl=discoveryUrl)
             # Range of values we care about here
-            headerRange = 'Sync!A1:1'
+            headerRange = 'SYNC!A1:1'
             header = service.spreadsheets().values().get(
                 spreadsheetId=spreadsheetId, range=headerRange).execute()
             columns = header.get('values', [])[0]
-            rangeName = 'Sync!A2:Z'
+            rangeName = 'SYNC!A2:Z'
             result = service.spreadsheets().values().get(
                 spreadsheetId=spreadsheetId, range=rangeName).execute()
             values = result.get('values', [])
