@@ -22,9 +22,10 @@ from slackclient import SlackClient
 #   slack_token.txt (for Slack API), client_secret.json (for Google Drive/Sheets API)
 
 def usage():
-    print("Usage: python3 quickstart.py -f [folderId] -s [spreadsheetId]\n"+
+    print("Usage: python3 quickstart.py -f [folderId] -s [spreadsheetId] {-p [prefix]}\n"+
         "\t-f, --folder: the folder id where new spreadsheets should be created\n"+
         "\t-s, --spreadsheet: the spreadsheet id of the master sheet to be parsed\n"+
+        "\t-p, --prefix: a short prefix for puzzles in this round\n"+
         "\t-h, --help: display this usage message"
 )
 
@@ -34,7 +35,7 @@ slack_token = f.readlines()[0].strip('\n')
 sc = SlackClient(slack_token)
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], "hf:s:", ["help","folder=", "spreadsheet="])
+    opts, args = getopt.getopt(sys.argv[1:], "hf:s:p:", ["help","folder=", "spreadsheet=", "prefix="])
 except (getopt.GetoptError) as err:
     # print help information and exit:
     print(str(err))  # will print something like "option -a not recognized"
@@ -50,6 +51,8 @@ for o, a in opts:
         folderId = a
     elif o in ("-s", "--spreadsheet"):
         spreadsheetId = a
+    elif o in ("-p", "--prefix"):
+        prefix = a
     else:
         assert False, "unhandled option"
 if not folderId:
@@ -58,6 +61,10 @@ if not folderId:
     sys.exit(2)
 if not spreadsheetId:
     print("-s was not given")
+    usage()
+    sys.exit(2)
+if prefix and len(prefix) > 3:
+    print("specified prefix too long")
     usage()
     sys.exit(2)
 
@@ -162,6 +169,14 @@ def update_spreadsheet_link(rangeName,puzzleSpreadsheetId):
         spreadsheetId=spreadsheetId, range=rangeName,
         valueInputOption=valueInputOption, body=body).execute()
     return result
+    
+def make_short_channel_name(puzzle):
+    shortPuzzle = re.sub(r' ', '-', puzzle)
+    if prefix:
+        shortPuzzle = prefix + '-' + shortPuzzle
+    shortPuzzle = re.sub(r'[^a-zA-Z0-9_-]', '', shortPuzzle)[:21]
+    shortPuzzle = shortPuzzle.lower()
+    return shortPuzzle
 
 def main():
 
@@ -213,9 +228,7 @@ def main():
 
                     # Create the slack channel name (spaces -> hyphens, remove other chars, shorten to 21 chars)
                     print('%s, %s, %s' % (puzzle, status, answer))
-                    shortPuzzle = re.sub(r' ', '-', puzzle)
-                    shortPuzzle = re.sub(r'[^a-zA-Z0-9_-]', '', shortPuzzle)[:21]
-                    shortPuzzle = shortPuzzle.lower()
+                    shortPuzzle = make_short_channel_name(puzzle)
 
                     # Join the channel, or create it if it doesn't exist
                     join_response = sc.api_call(
