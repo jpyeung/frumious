@@ -292,7 +292,7 @@ def main():
                         )
 
             # Set refresh time here in seconds
-            time.sleep(10)
+            time.sleep(20)
     else:
         print("Connection Failed, invalid token?")
 
