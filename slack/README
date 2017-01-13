@@ -24,10 +24,12 @@ Required:
 		-f, --folder: the folder id where new spreadsheets should be created
 		-s, --spreadsheet: the spreadsheet id of the master sheet to be parsed,
 		    should contain a sheet called 'SYNC'
+		-p, --prefix: a short identifier, prepended to channel names in this round
 
 Features:
 	- Reads the 'Puzzle' column, creating a Slack channel if necessary
-		(using a short, Slack-sanitized name)
+		(using a short, Slack-sanitized name, optionally with a prefix
+		corresponding to the meta)
 	- Reads the 'Spreadsheet Link' column, creating a Google spreadsheet in the
 		specified folder if necessary (i.e., if the cell is empty)
 	- Reads the 'Status' column, if not solved, unarchive channel and set title
