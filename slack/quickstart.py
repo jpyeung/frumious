@@ -176,7 +176,7 @@ def create_puzzle_spreadsheet(puzzle, folder):
                                     fields='id').execute()
     return file.get('id')
 
-def update_spreadsheet_link(rangeName,puzzleSpreadsheetId):
+def update_spreadsheet_link(rangeName,spreadsheetId,puzzleSpreadsheetId):
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     discoveryUrl = ('https://sheets.googleapis.com/$discovery/rest?'
@@ -223,6 +223,7 @@ def main():
                                 'version=v4')
                 service = discovery.build('sheets', 'v4', http=http,
                                           discoveryServiceUrl=discoveryUrl)
+                driveService = discovery.build('drive', 'v3', http=http)
                 # Range of values we care about here
                 headerRange = 'SYNC!A1:1'
                 header = service.spreadsheets().values().get(
@@ -236,6 +237,8 @@ def main():
                 if not values:
                     print('No data found.')
                 else:
+                    folderFile = driveService.files().get(fileId=folderId).execute()
+                    print(folderFile['name'])
                     print('Puzzle, Status, Answer:')
                     rownum = 1
                     puzzleIndex = columns.index('Puzzle')
@@ -274,7 +277,7 @@ def main():
                                 puzzleSpreadsheetId = matchObj.group(1)
                         else:
                             puzzleSpreadsheetId = create_puzzle_spreadsheet(puzzle, folderId)
-                            update_spreadsheet_link('E'+str(rownum), puzzleSpreadsheetId)
+                            update_spreadsheet_link('E'+str(rownum), spreadsheetId, puzzleSpreadsheetId)
 
                         # Get list of Slack channels and pull channel ids
                         channels = list_channels()
