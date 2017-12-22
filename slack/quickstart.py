@@ -316,8 +316,9 @@ def main():
                                 channel=channel_ids[shortPuzzle],
                                 purpose=puzzleLink
                             )
+
                         # Set the topic of the channel to be the spreadsheet link
-                        if channel_info['channel']['topic']['value'] != spreadsheetLink:
+                        if channel_info['channel']['topic']['value'] != ('<'+spreadsheetLink+'>'):
                             topic_response = sc.api_call(
                                 "channels.setTopic",
                                 channel=channel_ids[shortPuzzle],
