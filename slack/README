@@ -7,7 +7,8 @@ quickstart.py - Reads a Google spreadsheet with a 'SYNC' sheet
 	and creates spreadsheets and Slack channels for puzzles,
 	updating them accordingly based on status change
 
-Usage: python3 quickstart.py -f [folderId] -s [spreadsheetId] -p [prefix]
+Usage: python3 quickstart.py -c [filename] OR
+python3 quickstart.py -f [folderId] -s [spreadsheetId] -p [prefix]
 
 Required:
 	Files:
@@ -21,6 +22,9 @@ Required:
 		python3 -m pip install --upgrade google-api-python-client
 
 	Arguments:
+		-c, --csv: the file path to the csv accepting the arguments below
+			(i.e., each row should be a comma-separated list of
+			folderId, spreadsheetId, prefix)
 		-f, --folder: the folder id where new spreadsheets should be created
 		-s, --spreadsheet: the spreadsheet id of the master sheet to be parsed,
 		    should contain a sheet called 'SYNC'
