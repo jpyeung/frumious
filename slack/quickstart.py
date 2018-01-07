@@ -74,7 +74,7 @@ for o, a in opts:
         prefixOption = a
     else:
         assert False, "unhandled option"
-if csv:
+if csvOption:
     csvrows = readcsv(csvOption)
     if not csvrows:
         print("csv did not contain any rows")
