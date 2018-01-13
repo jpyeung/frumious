@@ -209,8 +209,8 @@ def main():
 
     if sc.rtm_connect():
         while True:
+            print('Refresh time: '+global_refresh_time+' seconds')
             try:
-                print('Refresh time: '+global_refresh_time+' seconds')
                 for csvrow in csvrows:
                     folderId = csvrow[0]
                     spreadsheetId = csvrow[1]
