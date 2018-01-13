@@ -209,7 +209,7 @@ def main():
     if sc.rtm_connect():
         while True:
             try:
-                print('Refresh time: '+global_refresh_time+' seconds')
+                print('Refresh time: '+str(global_refresh_time)+' seconds')
                 for csvrow in csvrows:
                     folderId = csvrow[0]
                     spreadsheetId = csvrow[1]
@@ -329,7 +329,7 @@ def main():
 
                 # Set refresh time here in seconds
                 time.sleep(global_refresh_time)
-            except apiclient.errors.HttpError:
+            except:
                 global_refresh_time = global_refresh_time * 2
     else:
         print("Connection Failed, invalid token?")
