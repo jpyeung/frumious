@@ -60,7 +60,6 @@ csvOption = None
 csvrows = None
 folderOption = None
 spreadsheetOption = None
-global_refresh_time = 60
 for o, a in opts:
     if o in ("-h", "--help"):
         usage()
@@ -206,11 +205,11 @@ def make_short_channel_name(puzzle, prefix):
     return shortPuzzle
 
 def main():
-
+    global_refresh_time = 60
     if sc.rtm_connect():
         while True:
-            print('Refresh time: '+global_refresh_time+' seconds')
             try:
+                print('Refresh time: '+global_refresh_time+' seconds')
                 for csvrow in csvrows:
                     folderId = csvrow[0]
                     spreadsheetId = csvrow[1]
@@ -330,7 +329,7 @@ def main():
 
                 # Set refresh time here in seconds
                 time.sleep(global_refresh_time)
-            except HttpError:
+            except apiclient.errors.HttpError:
                 global_refresh_time = global_refresh_time * 2
     else:
         print("Connection Failed, invalid token?")
