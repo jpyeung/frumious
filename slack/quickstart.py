@@ -7,6 +7,7 @@ import time
 import string
 import sys
 import csv
+import random
 
 from apiclient import discovery
 from oauth2client import client
@@ -205,10 +206,12 @@ def make_short_channel_name(puzzle, prefix):
     return shortPuzzle
 
 def main():
-    global_refresh_time = 60
+    default_refresh_time = 32
     if sc.rtm_connect():
         while True:
-            try:
+            pause = random.randint(1, 1000) / 1000.0
+            global_refresh_time = default_refresh_time + pause
+            try:  
                 print('Refresh time: '+str(global_refresh_time)+' seconds')
                 for csvrow in csvrows:
                     folderId = csvrow[0]
@@ -329,8 +332,8 @@ def main():
 
                 # Set refresh time here in seconds
                 time.sleep(global_refresh_time)
-            except:
-                global_refresh_time = global_refresh_time * 2
+            except service.errors.HttpError:
+                default_refresh_time = default_refresh_time * 2
     else:
         print("Connection Failed, invalid token?")
 
