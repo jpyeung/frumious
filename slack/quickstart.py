@@ -7,6 +7,7 @@ import time
 import string
 import sys
 import csv
+import traceback
 
 from apiclient import discovery
 from oauth2client import client
@@ -264,11 +265,12 @@ def main():
                             "channels.join",
                             name=shortPuzzle
                         )
-                        if join_response['error'] == 'channel_not_found':
-                            create_response = sc.api_call(
-                                "channels.create",
-                                name=shortPuzzle
-                            )
+                        if 'error' in join_response:
+                            if join_response['error'] == 'channel_not_found':
+                                create_response = sc.api_call(
+                                    "channels.create",
+                                    name=shortPuzzle
+                                )
 
                         # Grab spreadsheet ID from spreadsheet link column
                         puzzleSpreadsheetId = ''
@@ -279,7 +281,7 @@ def main():
                         else:
                             puzzleSpreadsheetId = create_puzzle_spreadsheet(puzzle, folderId)
                             update_spreadsheet_link('F'+str(rownum), spreadsheetId, puzzleSpreadsheetId)
-                        
+
                         # Get list of Slack channels and pull channel ids
                         channels = list_channels()
                         channel_ids = {}
@@ -334,8 +336,8 @@ def main():
 
             except (KeyboardInterrupt, SystemExit):
                 raise
-            except Exception as e:
-                print(e.__class__.__name__,':',e)
+            except Exception as err:
+                print(traceback.print_tb(err.__traceback__))
                 global_refresh_time = global_refresh_time * 2
             # Set refresh time here in seconds
             time.sleep(global_refresh_time)
