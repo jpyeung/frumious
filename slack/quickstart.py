@@ -206,7 +206,8 @@ def main():
                 print(metas)
                 """Shows basic usage of the Sheets API.
 
-                Creates a Sheets API service object at the spreadsheetId:
+                Creates a Sheets API service object at the spreadsheetId below:
+                https://docs.google.com/spreadsheets/d/1ax8w39o93QaOkRGZCPe_hEqdpZTkmNdDIo6fw3dHoqk/edit
                 """
                 credentials = get_credentials()
                 http = credentials.authorize(httplib2.Http())
