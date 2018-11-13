@@ -1,5 +1,6 @@
 /slack/client_secret.json
 /slack/slack_token.txt
+/slack/metas.csv
 *~
 *.pyc
 .*
